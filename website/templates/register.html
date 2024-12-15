@@ -1,9 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Register page{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block content %}
-<h1>Register</h1>
-<p>
-</p>
+<form action="." method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+    <div class="form-field">
+        {{ field.errors }}
+        {{ field.label_tag }} {{ field }}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    <input type="submit" value="Register">
+    <a href="/reset-password">Forgot my password</a>
+    <a href="/login">Login</a>
+</form>
 {% endblock %}

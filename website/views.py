@@ -1,9 +1,16 @@
+from django.db import IntegrityError
 from django.shortcuts import render
 from django.template import loader
+<<<<<<< HEAD
 from django.http import HttpResponse
 from .forms import LoginForm
 from .forms import ResetPasswordForm
 from .forms import ForgotPasswordForm
+=======
+from django.http import HttpResponse, HttpRequest
+from .forms import LoginForm, RegisterForm
+from .models import User
+>>>>>>> 94b7c229f109d721350d9fe6b69a0605f98b6740
 
 
 def index(request):
@@ -22,9 +29,26 @@ def login(request):
         return HttpResponse(form.data)
 
 
-def register(request):
-    template = loader.get_template("register.html")
-    return HttpResponse(template.render(request=request))
+def register(request: HttpRequest):
+    register_template = loader.get_template("register.html")
+    if request.method == "GET":
+        form = RegisterForm()
+        return HttpResponse(register_template.render({"form": form}, request))
+
+    elif request.method == "POST":
+        form = RegisterForm(request.POST)
+
+        if not form.is_valid():
+            return HttpResponse(register_template.render({"form": form}, request))
+
+        try:
+            user = User.objects.create_user(
+                form.data["username"], form.data["email"], form.data["password"])
+        except IntegrityError:
+            form.add_error(None, "User already exists")
+            return HttpResponse(register_template.render({"form": form}, request))
+
+        return HttpResponse("user created successfully")
 
 def forgot_password(request):
     if request.method == "POST":

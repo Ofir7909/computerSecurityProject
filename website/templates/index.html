@@ -3,7 +3,36 @@
 {% block title %}Index page{% endblock %}
 
 {% block content %}
-<h1>Index</h1>
+<style>
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+} 
+.h1 {
+    margin: 0;
+}
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: rgb(0, 0, 0);   
+    text-decoration: none;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+}    
+.button:hover {
+    background-color: darkblue;
+}
+</style>
+
+<div class="header-container">  
+<h1 style="font-family: Arial, sans-serif;">Communication LTD</h1>   
+<a href="http://127.0.0.1:8000/login/" class="button">User Login</a>
+
+</div>
+
 <p>
+    Your gateway to a secure user database management.
 </p>
 {% endblock %}
