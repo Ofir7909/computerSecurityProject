@@ -1,16 +1,9 @@
 from django.db import IntegrityError
 from django.shortcuts import render
 from django.template import loader
-<<<<<<< HEAD
-from django.http import HttpResponse
-from .forms import LoginForm
-from .forms import ResetPasswordForm
-from .forms import ForgotPasswordForm
-=======
 from django.http import HttpResponse, HttpRequest
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
 from .models import User
->>>>>>> 94b7c229f109d721350d9fe6b69a0605f98b6740
 
 
 def index(request):
