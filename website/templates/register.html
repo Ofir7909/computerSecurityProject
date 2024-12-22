@@ -1,9 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Register page{% endblock %}
+{% block title %}
+    Register
+{% endblock title %}
 
 {% block content %}
-<h1>Register</h1>
-<p>
-</p>
-{% endblock %}
+    <div class="input-page">
+        <form action="{% url 'register' %}" method="post" class="card input-form">
+            {% csrf_token %}
+            <div class="card-header flex-col gap-2">
+                <h2>Register</h2>
+                <p>Create an account to continue.</p>
+            </div>
+            <div class="card-content flex-col gap-4">
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    <div class="form-field">
+                        {{ field.errors }}
+                        {{ field.label_tag }} {{ field }}
+                        {% if field.help_text %}<p class="help">{{ field.help_text|safe }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer flex-col gap-4">
+                <input type="submit" class="btn-primary" value="Create account">
+                <div>
+                    Already have an account? <a href="{% url 'login' %}">Login</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
