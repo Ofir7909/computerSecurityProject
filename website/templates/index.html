@@ -8,31 +8,65 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-} 
+    padding: 10px;
+    background-color: aliceblue;
+    opacity: 0.4;
+}
+
 .h1 {
+    font-weight: bold;
+    font-size: 40px;
     margin: 0;
 }
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
 .button {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: rgb(0, 0, 0);   
+    background-color: #7677b6;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    color: rgb(0, 0, 0);
     text-decoration: none;
-    border-radius: 5px;
-    font-family: Arial, sans-serif;
-}    
+    border-radius: 15px;
+    margin: 8px 0;
+}
+
 .button:hover {
-    background-color: darkblue;
+    background-color: #acadea;
+}
+
+.second-headline {
+    position: absolute;
+    top: 62px; /* Adjust this value to control the vertical position */
+    left: 15px; /* Adjust this value to control the horizontal position */
+    font-size: 18px;
+    font-style: oblique;
+    font-weight: bold;
+    opacity: 0.6;
 }
 </style>
 
 <div class="header-container">  
-<h1 style="font-family: Arial, sans-serif;">Communication LTD</h1>   
-<a href="http://127.0.0.1:8000/login/" class="button">User Login</a>
-
+    <h1 class="h1">Communication LTD</h1> 
+    <div class="button-container">
+        <a href="http://127.0.0.1:8000/login/" class="button">Login</a>
+        <a href="http://127.0.0.1:8000/register/" class="button">Register</a>
+    </div>
 </div>
 
-<p>
-    Your gateway to a secure user database management.
-</p>
+
+
+<p class="second-headline">Your gateway to a secure user database management.</p>  
+
+
+
+<bottom-text-body>
+    all rights reserved to jesse volovik est 2005.
+</bottom-text-body>
+
 {% endblock %}
