@@ -1,5 +1,10 @@
 
-
 body , h1{
     font-family: 'Roboto', Arial, sans-serif;
+}
+
+body {
+    background: linear-gradient(130deg, #016984, #010028);
+    height: 100vh;
+    margin: 0;
 }
