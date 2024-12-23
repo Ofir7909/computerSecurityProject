@@ -1,16 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}
+    Login
+{% endblock title %}
 
 {% block content %}
-<h1>Login</h1>
-<form action="." method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Log in">
-    <a href="/forgot-password">Forgot my password</a>
-    <a href="/register">Register</a>
-</form>
-<p>
-</p>
-{% endblock %}
+    <div class="flex-1 flex-center">
+        <form action="{% url 'login' %}" method="post" class="card card-lg">
+            {% csrf_token %}
+            <div class="card-header flex-col gap-2">
+                <h2>Login</h2>
+                <p>Enter your username and password to continue.</p>
+            </div>
+            <div class="card-content flex-col gap-4">
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    <div class="form-field">
+                        {{ field.errors }}
+                        {{ field.label_tag }} {{ field }}
+                        {% if field.help_text %}<p class="help">{{ field.help_text|safe }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="card-footer flex-col gap-4">
+                <div>
+                    <a href="{% url 'forgot_password' %}">Forgot my password</a>
+                </div>
+                <input type="submit" class="btn-primary" value="Log in">
+                <div>
+                    Don't have an account? <a href="{% url 'register' %}">Register</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

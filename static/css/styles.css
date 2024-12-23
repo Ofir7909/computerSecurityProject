@@ -19,13 +19,7 @@
 
 html,
 body {
-  height: 100%;
-}
-
-body {
   min-height: 100vh;
-  line-height: 1.5;
-  font-family: "Roboto", Arial, sans-serif;
 }
 
 input,
@@ -38,6 +32,10 @@ select {
 /* General Styles*/
 
 body {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+  font-family: "Roboto", Arial, sans-serif;
   background: linear-gradient(130deg, #016984, #010028);
 }
 
@@ -76,6 +74,12 @@ button {
   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
+.card-lg {
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem;
+}
+
 .card-header {
   display: flex;
   flex-direction: column;
@@ -91,19 +95,4 @@ button {
 .card-footer {
   padding: 1.5rem;
   padding-top: 0;
-}
-
-/* Pages */
-
-.input-page {
-  min-height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.input-form {
-  max-width: 600px;
-  flex: 1;
-  margin: 1rem;
 }

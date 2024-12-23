@@ -5,8 +5,8 @@
 {% endblock title %}
 
 {% block content %}
-    <div class="input-page">
-        <form action="{% url 'register' %}" method="post" class="card input-form">
+    <div class="flex-1 flex-center">
+        <form action="{% url 'register' %}" method="post" class="card card-lg">
             {% csrf_token %}
             <div class="card-header flex-col gap-2">
                 <h2>Register</h2>
