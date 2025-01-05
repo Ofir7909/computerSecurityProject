@@ -3,8 +3,12 @@ from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse, HttpRequest
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
-from .models import User
+from .models import User, Client
 
+def system(request):
+    template = loader.get_template("system.html")
+    clients = Client.objects.all()
+    return render(request, 'system.html', {'clients':clients})
 
 def index(request):
     template = loader.get_template("index.html")
@@ -20,7 +24,7 @@ def login(request):
         password = request.POST['password']
         user = authenticate(username=username, password=password)
         if user is not None: #https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
-            return redirect("index")
+            return redirect("system")
         else:
             return render(request, 'login.html', 
                 { "form": LoginForm(),'message': 'Bad username or password'})
