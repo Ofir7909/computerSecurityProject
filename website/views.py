@@ -5,14 +5,17 @@ from django.http import HttpResponse, HttpRequest
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
 from .models import User, Client
 
+
 def system(request):
     template = loader.get_template("system.html")
     clients = Client.objects.all()
-    return render(request, 'system.html', {'clients':clients})
+    return render(request, 'system.html', {'clients': clients})
+
 
 def index(request):
     template = loader.get_template("index.html")
     return HttpResponse(template.render(request=request))
+
 
 def login(request):
     if request.method == "GET":
@@ -23,16 +26,17 @@ def login(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
-        if user is not None: #https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
+        if user is not None:  # https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
             return redirect("system")
         else:
-            return render(request, 'login.html', 
-                { "form": LoginForm(),'message': 'Bad username or password'})
+            return render(request, 'login.html',
+                          {"form": LoginForm(), 'message': 'Bad username or password'})
     else:
-        #return render(request, 'login.html')
+        # return render(request, 'login.html')
         form = LoginForm(request.POST)
         print(form.data)
         return HttpResponse(form.data)
+
 
 def register(request: HttpRequest):
     if request.method == "POST":
@@ -52,6 +56,7 @@ def register(request: HttpRequest):
         form = RegisterForm()
     return render(request, "register.html", {"form": form})
 
+
 def forgot_password(request):
     if request.method == "POST":
         form = ForgotPasswordForm(request.POST)
@@ -61,6 +66,7 @@ def forgot_password(request):
         form = ForgotPasswordForm()
         return render(request, 'forgot_password.html', {'form': form})
 
+
 def reset_password(request):
     if request.method == "POST":
         form = ResetPasswordForm(request.POST)
@@ -69,20 +75,21 @@ def reset_password(request):
             current_password = form.cleaned_data['current_password']
             new_password = form.cleaned_data['new_password']
             confirm_password = form.cleaned_data['confirm_password']
-            
-            if new_password != confirm_password:
-                return render(request, "reset_password.html", {    "form": form,   "error": "New password and confirmation do not match." })
 
-            return render(request, "reset_password.html", { "form": form,  "success": "Password reset successful!"   })
-        
+            if new_password != confirm_password:
+                return render(request, "reset_password.html", {"form": form,   "error": "New password and confirmation do not match."})
+
+            return render(request, "reset_password.html", {"form": form,  "success": "Password reset successful!"})
+
         else:
-            return render(request, "reset_password.html", {  "form": form,   "error": "Invalid data submitted!"   })
-    
+            return render(request, "reset_password.html", {"form": form,   "error": "Invalid data submitted!"})
+
     else:
         form = ResetPasswordForm()
         return render(request, "reset_password.html", {"form": form})
 
-def authenticate( username=None, password=None):
+
+def authenticate(username=None, password=None):
     try:
         user = User.objects.get(username=username)
         if user.check_password(password):
