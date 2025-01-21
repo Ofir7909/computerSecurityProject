@@ -7,6 +7,9 @@ class User(AbstractUser):
     username = models.CharField(max_length=64, unique=True)
     email = models.EmailField()
 
+   
+        
+
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
