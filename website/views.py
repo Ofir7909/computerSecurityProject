@@ -3,8 +3,14 @@ from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse, HttpRequest
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
-from .models import User
+from .models import User, Client
 from django.conf import settings
+
+
+def system(request):
+    template = loader.get_template("system.html")
+    clients = Client.objects.all()
+    return render(request, "system.html", {"clients": clients})
 
 
 def index(request):
