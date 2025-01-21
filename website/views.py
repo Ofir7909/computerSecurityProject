@@ -2,11 +2,14 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse, HttpRequest
+from django.contrib.auth import authenticate, login as django_login
+from django.contrib.auth.decorators import login_required
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
 from .models import User, Client
 from django.conf import settings
 
 
+@login_required(login_url="/login")
 def system(request):
     template = loader.get_template("system.html")
     clients = Client.objects.all()
@@ -23,25 +26,21 @@ def login(request):
         template = loader.get_template("login.html")
         form = LoginForm()
         return HttpResponse(template.render({"form": form}, request))
+
     elif request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(username=username, password=password)
-        if (
-            user is not None
-        ):  # https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
-            return redirect("index")
-        else:
-            return render(
-                request,
-                "login.html",
-                {"form": LoginForm(), "message": "Bad username or password"},
-            )
-    else:
-        # return render(request, 'login.html')
         form = LoginForm(request.POST)
-        print(form.data)
-        return HttpResponse(form.data)
+        if form.is_valid():
+            user = authenticate(
+                username=form.data["username"], password=form.data["password"]
+            )
+
+            # https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
+            if user is not None:
+                django_login(request, user)
+                return redirect("index")
+            else:
+                form.add_error(None, "Bad username or password")
+        return render(request, "login.html", {"form": form})
 
 
 def register(request: HttpRequest):
@@ -61,7 +60,7 @@ def register(request: HttpRequest):
                     return redirect("login")
                 except IntegrityError:
                     form.add_error(None, "This user already exists")
-                # ERROR
+
     elif request.method == "GET":
         form = RegisterForm()
     return render(request, "register.html", {"form": form})
@@ -112,12 +111,3 @@ def reset_password(request):
     else:
         form = ResetPasswordForm()
         return render(request, "reset_password.html", {"form": form})
-
-
-def authenticate(username=None, password=None):
-    try:
-        user = User.objects.get(username=username)
-        if user.check_password(password):
-            return user
-    except User.DoesNotExist:
-        return None
