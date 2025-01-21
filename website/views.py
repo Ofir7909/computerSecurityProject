@@ -48,10 +48,11 @@ def register(request: HttpRequest):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            if not settings.PASSWORD_REQUIERMENTS.is_password_valid(
-                form.data["password"]
-            ):
-                form.add_error(None, "The password is not met the requirements")
+            password_validation_error = (
+                settings.PASSWORD_REQUIERMENTS.is_password_valid(form.data["password"])
+            )
+            if password_validation_error:
+                form.add_error("password", password_validation_error)
             else:
                 try:
                     user = User.objects.create_user(
@@ -59,7 +60,7 @@ def register(request: HttpRequest):
                     )
                     return redirect("login")
                 except IntegrityError:
-                    form.add_error(None, "User already exists")
+                    form.add_error(None, "This user already exists")
                 # ERROR
     elif request.method == "GET":
         form = RegisterForm()

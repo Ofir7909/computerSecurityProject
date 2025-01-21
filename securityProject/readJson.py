@@ -33,34 +33,28 @@ class PassConfig:
         )
         return self
 
-    def is_password_valid(self, password: str) -> bool:
+    def is_password_valid(self, password: str) -> str:
         if len(password) < self.password_length:
-            print("length Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            return False
+            return f"Password must be at least {self.password_length} characters long"
 
         if self.capital_letters:
             if not any(c.isupper() for c in password):
-                print("upper Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                return False
+                return "Password must include a capital letter"
 
         if self.small_letters:
             if not any(c.islower() for c in password):
-                print("lower Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                return False
+                return "Password must include a lowercase letter"
 
         if self.special_characters:
             if not any(c in "!@#$%" for c in password):
-                print("symbols Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                return False
+                return "Password must include a symbol"
 
         if self.numbers:
             if not any(c in "0123456789" for c in password):
-                print("number Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                return False
+                return "Password must include a number"
 
         # can change to word in password
         if any(word == password for word in self.disallowed_words):
-            print("dictionary Error!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            return False
+            return "Password is too common"
 
-        return True
+        return ""
