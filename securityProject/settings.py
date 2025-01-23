@@ -10,9 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
 from .readJson import PassConfig
 
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,8 +44,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "axes",
 ]
-
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -49,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "securityProject.urls"
@@ -108,6 +118,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 PASSWORD_CONFIG_PATH = BASE_DIR / "passwordConfig" / "password.json"
 PASSWORD_REQUIERMENTS = PassConfig().read_config(PASSWORD_CONFIG_PATH)
+
+AXES_FAILURE_LIMIT = PASSWORD_REQUIERMENTS.number_of_attempts
+AXES_COOLOFF_TIME: 0
+AXES_RESET_ON_SUCCESS = True
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -131,3 +147,8 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "website.User"
+
+
+MAIL_PASS = os.getenv("MAIL_PASS")
+SMTP_URL = os.getenv("SMTP_URL")
+MAIL = os.getenv("MAIL")

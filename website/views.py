@@ -1,12 +1,24 @@
+from datetime import timedelta
+from django.utils import timezone
+import hashlib
+import secrets
+import ssl
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse, HttpRequest
 from django.contrib.auth import authenticate, login as django_login
 from django.contrib.auth.decorators import login_required
+
+from securityProject import settings
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
-from .models import User, Client
+from .models import Token, User, Client
 from django.conf import settings
+
+##################
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 @login_required(login_url="/login")
@@ -31,7 +43,9 @@ def login(request):
         form = LoginForm(request.POST)
         if form.is_valid():
             user = authenticate(
-                username=form.data["username"], password=form.data["password"]
+                username=form.data["username"],
+                password=form.data["password"],
+                request=request,
             )
 
             # https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
@@ -70,7 +84,21 @@ def forgot_password(request):
     if request.method == "POST":
         form = ForgotPasswordForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data["email"]
+            # toMail = "ofir7909@gmail.com"
+            toMail = form.data["email"]
+            try:
+                user = User.objects.get(email=toMail)
+            except User.DoesNotExist:
+                form.add_error(None, "Mail doesn't Exist")
+                return render(request, "forgot_password.html", {"form": form})
+            token = Token(
+                token=Token.generate_random_sha1_token(),
+                user=user,
+                expires_at=timezone.now() + timedelta(minutes=15),
+            )
+            token.save()
+            send_email(toMail, "Test1", f"your Token is {token.token}")
+            return redirect("reset_password")
     else:
         form = ForgotPasswordForm()
         return render(request, "forgot_password.html", {"form": form})
@@ -111,3 +139,22 @@ def reset_password(request):
     else:
         form = ResetPasswordForm()
         return render(request, "reset_password.html", {"form": form})
+
+
+def send_email(toMail, subject, message):
+    fromMail = f"Computer Security Project <{settings.MAIL}>"
+    message = f"""\
+Subject: {subject}
+To: {toMail}
+From: {fromMail}
+
+{message}
+"""
+
+    try:
+        with smtplib.SMTP(settings.SMTP_URL, 587) as server:
+            server.starttls()
+            server.login("api", settings.MAIL_PASS)
+            server.sendmail(fromMail, toMail, message)
+    except Exception as e:
+        print(e)

@@ -10,7 +10,7 @@ class PassConfig:
         self.numbers = False
         self.history_of_passwords = 1  #
         self.disallowed_words = []
-        self.number_of_attempts = 5  #
+        self.number_of_attempts = 2  #
 
     def read_config(self, file_path):
         with open(file_path, "r") as json_file:
