@@ -28,6 +28,9 @@ class Token(models.Model):
         related_name="tokens",  # This is optional but useful for reverse querying
     )
 
+    def is_valid(self) -> bool:
+        return self.expires_at >= timezone.now()
+
     @staticmethod
     def generate_random_sha1_token(length=16):
         return hashlib.sha1(secrets.token_bytes(length)).hexdigest()

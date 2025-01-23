@@ -19,11 +19,11 @@ class ForgotPasswordForm(forms.Form):
 
 
 class ResetPasswordForm(forms.Form):
-    current_password = forms.CharField(
-        label="Current Password",
+    token = forms.CharField(
+        label="Token",
         required=True,
         max_length=128,
-        widget=forms.PasswordInput(),
+        widget=forms.TextInput(),
     )
     new_password = forms.CharField(
         label="New Password",

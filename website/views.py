@@ -109,26 +109,35 @@ def reset_password(request):
         form = ResetPasswordForm(request.POST)
 
         if form.is_valid():
-            current_password = form.cleaned_data["current_password"]
+            token = form.cleaned_data["token"]
             new_password = form.cleaned_data["new_password"]
             confirm_password = form.cleaned_data["confirm_password"]
 
             if new_password != confirm_password:
-                return render(
-                    request,
-                    "reset_password.html",
-                    {
-                        "form": form,
-                        "error": "New password and confirmation do not match.",
-                    },
+                form.add_error("confirm_password", "Passwords do not match.")
+                return render(request, "reset_password.html", {"form": form})
+            try:
+                token_obj = Token.objects.get(token=token)
+            except Token.DoesNotExist:
+                form.add_error("token", "Unknown token.")
+                return render(request, "reset_password.html", {"form": form})
+
+            if not token_obj.is_valid():
+                form.add_error("token", "This token is expired")
+                return render(request, "reset_password.html", {"form": form})
+
+            password_validation_error = (
+                settings.PASSWORD_REQUIERMENTS.is_password_valid(
+                    form.data["new_password"]
                 )
-
-            return render(
-                request,
-                "reset_password.html",
-                {"form": form, "success": "Password reset successful!"},
             )
-
+            if password_validation_error:
+                form.add_error("new_password", password_validation_error)
+                return render(request, "reset_password.html", {"form": form})
+            else:
+                token_obj.user.set_password(new_password)
+                token_obj.user.save()
+                return redirect("login")
         else:
             return render(
                 request,
