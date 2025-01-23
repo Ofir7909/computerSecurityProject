@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login as django_login
 from django.contrib.auth.decorators import login_required
 from website.email import send_email
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
-from .models import Token, User, Client
+from .models import PasswordHistory, Token, User, Client
 from django.conf import settings
 
 
@@ -62,6 +62,8 @@ def register(request: HttpRequest):
                     user = User.objects.create_user(
                         form.data["username"], form.data["email"], form.data["password"]
                     )
+                    PasswordHistory(password=user.password, user=user).save()
+
                     return redirect("login")
                 except IntegrityError:
                     form.add_error(None, "This user already exists")
@@ -124,10 +126,15 @@ def reset_password(request):
             if password_validation_error:
                 form.add_error("new_password", password_validation_error)
                 return render(request, "reset_password.html", {"form": form})
-            else:
-                token_obj.user.set_password(new_password)
-                token_obj.user.save()
-                return redirect("login")
+            if PasswordHistory.is_in_history(token_obj.user, new_password):
+                form.add_error("new_password", "Can't use an old password")
+                return render(request, "reset_password.html", {"form": form})
+            token_obj.user.set_password(new_password)
+            token_obj.user.save()
+            PasswordHistory(
+                password=token_obj.user.password, user=token_obj.user
+            ).save()
+            return redirect("login")
         else:
             return render(
                 request,

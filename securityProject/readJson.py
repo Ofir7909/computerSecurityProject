@@ -8,7 +8,7 @@ class PassConfig:
         self.small_letters = False
         self.special_characters = False
         self.numbers = False
-        self.history_of_passwords = 1  #
+        self.history_of_passwords = 2  #
         self.disallowed_words = []
         self.number_of_attempts = 2  #
 
