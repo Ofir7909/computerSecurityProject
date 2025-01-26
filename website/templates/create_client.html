@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Create Client{% endblock %}
+
+{% block content %}
+<div class="flex-1 flex-center">
+    <form method="post" class="card card-lg">
+        {% csrf_token %}
+        <div class="card-header flex-col gap-2">
+            <h2>Create New Client</h2>
+        </div>
+        <div class="card-content flex-col gap-4">
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <div class="form-field">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+                {% if field.help_text %}
+                <p class="help">{{ field.help_text|safe }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="card-footer flex-col gap-4">
+            <input type="submit" class="btn-primary" value="Create Client">
+            <a href="{% url 'system' %}">Back to System Panel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

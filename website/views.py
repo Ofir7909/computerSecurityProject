@@ -7,16 +7,41 @@ from django.http import HttpResponse, HttpRequest
 from django.contrib.auth import authenticate, login as django_login
 from django.contrib.auth.decorators import login_required
 from website.email import send_email
-from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
+from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm, ClientForm
 from .models import PasswordHistory, Token, User, Client
 from django.conf import settings
+from django.db.models import Q
+from django.utils.html import escape
 
 
 @login_required(login_url="/login")
 def system(request):
-    template = loader.get_template("system.html")
-    clients = Client.objects.all()
-    return render(request, "system.html", {"clients": clients})
+    filter_query = request.GET.get('filter', '').strip()
+
+    if filter_query:
+        filter_query = escape(filter_query)
+        clients = Client.objects.filter(
+            Q(id__icontains=filter_query) | Q(name__icontains=filter_query)
+        )
+    else:
+        clients = Client.objects.all()
+
+    return render(request, 'system.html', {'clients': clients})
+
+
+@login_required(login_url="/login")
+def create_client(request):
+    if request.method == "POST":
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            Client.objects.create(
+                name=form.cleaned_data["name"],
+                email=form.cleaned_data["email"],
+            )
+            return redirect("system")
+    else:
+        form = ClientForm()
+    return render(request, "create_client.html", {"form": form})
 
 
 def index(request):
@@ -42,7 +67,7 @@ def login(request):
             # https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
             if user is not None:
                 django_login(request, user)
-                return redirect("index")
+                return redirect("system")
             else:
                 form.add_error(None, "Bad username or password")
         return render(request, "login.html", {"form": form})
@@ -53,7 +78,8 @@ def register(request: HttpRequest):
         form = RegisterForm(request.POST)
         if form.is_valid():
             password_validation_error = (
-                settings.PASSWORD_REQUIERMENTS.is_password_valid(form.data["password"])
+                settings.PASSWORD_REQUIERMENTS.is_password_valid(
+                    form.data["password"])
             )
             if password_validation_error:
                 form.add_error("password", password_validation_error)
