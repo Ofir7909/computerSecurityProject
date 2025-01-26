@@ -4,7 +4,7 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect
 from django.template import loader
 from django.http import HttpResponse, HttpRequest
-from django.contrib.auth import authenticate, login as django_login
+from django.contrib.auth import login as django_login
 from django.contrib.auth.decorators import login_required
 from website.email import send_email
 from .forms import (
@@ -18,6 +18,7 @@ from .models import PasswordHistory, Token, User, Client
 from django.conf import settings
 from django.db.models import Q
 from django.utils.html import escape
+from .hashers import MyPBKDF2PasswordHasher
 
 
 @login_required(login_url="/login")
@@ -64,15 +65,18 @@ def login(request):
     elif request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = authenticate(
-                username=form.data["username"],
-                password=form.data["password"],
-                request=request,
+            my_hasher = MyPBKDF2PasswordHasher()
+            hashed_password = my_hasher.encode(form.data["password"], my_hasher.salt())
+
+            user = User.objects.raw(
+                f"SELECT * from website_user where username='{form.data['username']}' and password='{hashed_password}'"
             )
+
+            user = user[0] if len(user) > 0 else None
 
             # https://stackoverflow.com/questions/16853044/logging-an-abstract-user-in
             if user is not None:
-                django_login(request, user)
+                django_login(request, user, backend="axes.backends.AxesBackend")
                 return redirect("system")
             else:
                 form.add_error(None, "Bad username or password")

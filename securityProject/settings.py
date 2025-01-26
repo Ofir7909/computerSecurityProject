@@ -98,6 +98,7 @@ DATABASES = {
     }
 }
 
+PASSWORD_HASHERS = ["website.hashers.MyPBKDF2PasswordHasher"]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

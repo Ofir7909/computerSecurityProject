@@ -1,0 +1,21 @@
+# Computer Security Project
+
+## This is the unsecure version
+
+### Commands
+
+#### stored XSS on section 4
+
+Create a new client with the name `<script>alert(1)</script>`
+
+#### sqli on section 1
+
+TODO
+
+#### sqli on section 3
+
+Trying to login in with the username `a'or 1=1--` and a random password, will log us in as the first user in the database, which in our case is admin
+
+#### sqli on section 4
+
+TODO
