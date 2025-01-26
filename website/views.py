@@ -4,11 +4,21 @@ from django.template import loader
 from django.http import HttpResponse, HttpRequest
 from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm
 from .models import User, Client
+from django.db.models import Q
+from django.utils.html import escape
 
 
 def system(request):
-    template = loader.get_template("system.html")
-    clients = Client.objects.all()
+    filter_query = request.GET.get('filter', '').strip()
+
+    if filter_query:
+        filter_query = escape(filter_query)
+        clients = Client.objects.filter(
+            Q(id__icontains=filter_query) | Q(name__icontains=filter_query)
+        )
+    else:
+        clients = Client.objects.all()
+
     return render(request, 'system.html', {'clients': clients})
 
 
