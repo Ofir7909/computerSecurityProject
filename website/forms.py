@@ -47,7 +47,8 @@ class RegisterForm(forms.Form):
         max_length=MAX_LENGTH,
         required=True,
     )
-    email = forms.EmailField(label="Email", max_length=MAX_LENGTH, required=True)
+    email = forms.EmailField(
+        label="Email", max_length=MAX_LENGTH, required=True)
     password = forms.CharField(
         label="Password",
         min_length=settings.PASSWORD_REQUIERMENTS.password_length,
@@ -55,3 +56,9 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(),
         required=True,
     )
+
+
+class ClientForm(forms.Form):
+    name = forms.CharField(label="Name", max_length=MAX_LENGTH, required=True)
+    email = forms.EmailField(
+        label="Email", max_length=MAX_LENGTH, required=True)
