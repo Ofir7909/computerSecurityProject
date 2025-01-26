@@ -7,7 +7,13 @@ from django.http import HttpResponse, HttpRequest
 from django.contrib.auth import authenticate, login as django_login
 from django.contrib.auth.decorators import login_required
 from website.email import send_email
-from .forms import LoginForm, RegisterForm, ResetPasswordForm, ForgotPasswordForm, ClientForm
+from .forms import (
+    LoginForm,
+    RegisterForm,
+    ResetPasswordForm,
+    ForgotPasswordForm,
+    ClientForm,
+)
 from .models import PasswordHistory, Token, User, Client
 from django.conf import settings
 from django.db.models import Q
@@ -16,7 +22,7 @@ from django.utils.html import escape
 
 @login_required(login_url="/login")
 def system(request):
-    filter_query = request.GET.get('filter', '').strip()
+    filter_query = request.GET.get("filter", "").strip()
 
     if filter_query:
         filter_query = escape(filter_query)
@@ -26,7 +32,7 @@ def system(request):
     else:
         clients = Client.objects.all()
 
-    return render(request, 'system.html', {'clients': clients})
+    return render(request, "system.html", {"clients": clients})
 
 
 @login_required(login_url="/login")
@@ -78,8 +84,7 @@ def register(request: HttpRequest):
         form = RegisterForm(request.POST)
         if form.is_valid():
             password_validation_error = (
-                settings.PASSWORD_REQUIERMENTS.is_password_valid(
-                    form.data["password"])
+                settings.PASSWORD_REQUIERMENTS.is_password_valid(form.data["password"])
             )
             if password_validation_error:
                 form.add_error("password", password_validation_error)
