@@ -94,9 +94,13 @@ def register(request: HttpRequest):
                 form.add_error("password", password_validation_error)
             else:
                 try:
-                    user = User.objects.create_user(
-                        form.data["username"], form.data["email"], form.data["password"]
+                    my_hasher = MyPBKDF2PasswordHasher()
+                    hashed_password = my_hasher.encode(
+                        form.data["password"], my_hasher.salt()
                     )
+
+                    query = f"INSERT INTO website_user (date_joined, is_active, first_name, last_name, password, username, email, is_staff, is_superuser) VALUES (datetime('NOW'), true, '', '', '{hashed_password}', '{form.data['username']}', '{form.data['email']}', false, false) RETURNING *"
+                    user = User.objects.raw(query)[0]
                     PasswordHistory(password=user.password, user=user).save()
 
                     return redirect("login")

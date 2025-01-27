@@ -10,7 +10,7 @@ Create a new client with the name `<script>alert(1)</script>`
 
 #### sqli on section 1
 
-TODO
+Regitering a new user with this username `hacker', 'hacker@mail.com', true, true) RETURNING \* --` will give it admin privilages
 
 #### sqli on section 3
 
