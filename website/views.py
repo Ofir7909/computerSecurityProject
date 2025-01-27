@@ -26,10 +26,8 @@ def system(request):
     filter_query = request.GET.get("filter", "").strip()
 
     if filter_query:
-        filter_query = escape(filter_query)
-        clients = Client.objects.filter(
-            Q(id__icontains=filter_query) | Q(name__icontains=filter_query)
-        )
+        query = f"SELECT * from website_client WHERE id LIKE '%{filter_query}%' OR NAME LIKE '%{filter_query}%'"
+        clients = Client.objects.raw(query)
     else:
         clients = Client.objects.all()
 

