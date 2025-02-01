@@ -5,7 +5,6 @@ MAX_LENGTH = 100
 
 
 class LoginForm(forms.Form):
-    # TODO: change max_length with config file
     username = forms.CharField(label="Username", max_length=MAX_LENGTH)
     password = forms.CharField(
         label="Password",
@@ -40,15 +39,13 @@ class ResetPasswordForm(forms.Form):
 
 
 class RegisterForm(forms.Form):
-    # TODO: change max_length with config file
     username = forms.CharField(
         label="Username",
         min_length=3,
         max_length=MAX_LENGTH,
         required=True,
     )
-    email = forms.EmailField(
-        label="Email", max_length=MAX_LENGTH, required=True)
+    email = forms.EmailField(label="Email", max_length=MAX_LENGTH, required=True)
     password = forms.CharField(
         label="Password",
         min_length=settings.PASSWORD_REQUIERMENTS.password_length,
@@ -60,5 +57,4 @@ class RegisterForm(forms.Form):
 
 class ClientForm(forms.Form):
     name = forms.CharField(label="Name", max_length=MAX_LENGTH, required=True)
-    email = forms.EmailField(
-        label="Email", max_length=MAX_LENGTH, required=True)
+    email = forms.EmailField(label="Email", max_length=MAX_LENGTH, required=True)
